@@ -1,0 +1,75 @@
+name: Cron Watchdog
+run-name: "Ace Magnets Watchdog · ${{ github.run_number }} — ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Scheduled' }}"
+
+on:
+  schedule:
+    # Fires at noon PDT (19:00 UTC) and noon PST (20:00 UTC).
+    # This is ~6 hours after the main cron window closes, giving the main
+    # cron plenty of time to have run (even with GitHub's typical delays).
+    # The watchdog calls /api/cron/watchdog which checks EmailLog and only
+    # re-sends emails + alerts admins if the main cron missed something.
+    - cron: '0 19 * * *'   # noon PDT (UTC-7, summer)
+    - cron: '0 20 * * *'   # noon PST (UTC-8, winter)
+  workflow_dispatch:
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gate on 11am–2pm Pacific
+        id: gate
+        run: |
+          PACIFIC_HOUR=$(TZ='America/Los_Angeles' date '+%-H')
+          echo "Pacific local hour: $PACIFIC_HOUR"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "Manual dispatch — running regardless of time."
+            echo "run=true" >> $GITHUB_OUTPUT
+          elif [[ "$PACIFIC_HOUR" -ge 11 && "$PACIFIC_HOUR" -le 14 ]]; then
+            echo "Within 11am–2pm Pacific window — running watchdog."
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Outside 11am–2pm Pacific window (local hour: ${PACIFIC_HOUR}) — skipping."
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Call watchdog endpoint
+        if: steps.gate.outputs.run == 'true'
+        id: call_watchdog
+        run: |
+          RESPONSE=$(curl -s -X POST https://www.acemagnetspoker.com/api/cron/watchdog \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          echo "$RESPONSE" > /tmp/watchdog_response.json
+          echo "$RESPONSE"
+
+      - name: Write job summary
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          RESPONSE=$(cat /tmp/watchdog_response.json)
+          STATUS=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status','unknown'))" 2>/dev/null || echo "unknown")
+          MAIN_RAN=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print('Yes' if d.get('mainCronRan') else 'No')" 2>/dev/null || echo "?")
+          MISSED=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print('Yes' if d.get('missedEmailsFound') else 'No')" 2>/dev/null || echo "?")
+          RERUN_SENT=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('rerunEmailsSent',0))" 2>/dev/null || echo "0")
+          MSG=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('message',''))" 2>/dev/null || echo "")
+
+          DATE=$(TZ='America/Los_Angeles' date '+%A, %B %-d %Y')
+
+          echo "## Ace Magnets — Watchdog Run" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $DATE" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** $STATUS" >> $GITHUB_STEP_SUMMARY
+          echo "**Main cron ran today:** $MAIN_RAN" >> $GITHUB_STEP_SUMMARY
+          echo "**Missed emails found:** $MISSED" >> $GITHUB_STEP_SUMMARY
+          echo "**Re-run emails sent:** $RERUN_SENT" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ -n "$MSG" ]]; then
+            echo "> $MSG" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Write skipped summary
+        if: steps.gate.outputs.run != 'true'
+        run: |
+          PACIFIC_HOUR=$(TZ='America/Los_Angeles' date '+%-H')
+          echo "## Ace Magnets — Watchdog Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Fired outside the 11am–2pm Pacific window (local hour: **${PACIFIC_HOUR}:00**). This is unexpected." >> $GITHUB_STEP_SUMMARY

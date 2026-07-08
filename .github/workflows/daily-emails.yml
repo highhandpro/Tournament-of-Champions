@@ -1,0 +1,86 @@
+name: Daily Scheduled Emails
+run-name: "Ace Magnets Emails · ${{ github.run_number }} — ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Scheduled' }}"
+
+on:
+  schedule:
+    # GitHub Actions cron runs in UTC and is often delayed 30–120+ min.
+    # We use two crons to cover both Pacific timezones, targeting 6am Pacific.
+    # The gate (below) accepts a 6am–9am Pacific window, so the workflow passes
+    # whether GitHub fires on time or up to ~3 hours late.
+    # Double-firing is safe: the API is idempotent (each email type has a *Sent
+    # flag that prevents resending if the endpoint is called twice in one day).
+    #
+    #   13:00 UTC = 6am PDT (UTC-7) in summer  ← active cron for PDT season
+    #             = 5am PST (UTC-8) in winter   ← below gate threshold, skipped
+    #   14:00 UTC = 6am PST (UTC-8) in winter  ← active cron for PST season
+    #             = 7am PDT (UTC-7) in summer   ← also within gate, idempotent
+    - cron: '0 13 * * *'
+    - cron: '0 14 * * *'
+  workflow_dispatch:       # allows manual trigger from GitHub UI
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gate on 6am–9am Pacific
+        id: gate
+        run: |
+          PACIFIC_HOUR=$(TZ='America/Los_Angeles' date '+%-H')
+          echo "Pacific local hour: $PACIFIC_HOUR"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "Manual dispatch — running regardless of time."
+            echo "run=true" >> $GITHUB_OUTPUT
+          elif [[ "$PACIFIC_HOUR" -ge 6 && "$PACIFIC_HOUR" -le 9 ]]; then
+            echo "Within 6am–9am Pacific window — running."
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Outside 6–9am Pacific window (local hour: ${PACIFIC_HOUR}) — skipping."
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger scheduled emails
+        if: steps.gate.outputs.run == 'true'
+        id: call_api
+        run: |
+          RESPONSE=$(curl -s -X POST https://www.acemagnetspoker.com/api/cron/run-scheduled-event-emails \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+          echo "$RESPONSE" > /tmp/api_response.json
+          echo "$RESPONSE"
+
+      - name: Write job summary
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          RESPONSE=$(cat /tmp/api_response.json)
+          EVENTS=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('eventsProcessed', 0))" 2>/dev/null || echo "0")
+          EMAILS=$(echo "$RESPONSE" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('emailsSent', 0))" 2>/dev/null || echo "0")
+          DETAILS=$(echo "$RESPONSE" | python3 -c "
+          import sys, json
+          d = json.load(sys.stdin)
+          rows = d.get('details', [])
+          if not rows:
+              print('_No emails sent today._')
+          else:
+              print('| Event | Type | Emails Sent |')
+              print('|---|---|---|')
+              for r in rows:
+                  print(f\"| {r['eventTitle']} | {r['type']} | {r['emailsSent']} |\")
+          " 2>/dev/null || echo "_Could not parse details._")
+
+          DATE=$(TZ='America/Los_Angeles' date '+%A, %B %-d %Y')
+
+          echo "## Ace Magnets — Daily Email Run" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $DATE" >> $GITHUB_STEP_SUMMARY
+          echo "**Events processed:** $EVENTS" >> $GITHUB_STEP_SUMMARY
+          echo "**Total emails sent:** $EMAILS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "$DETAILS" >> $GITHUB_STEP_SUMMARY
+
+      - name: Write skipped summary
+        if: steps.gate.outputs.run != 'true'
+        run: |
+          PACIFIC_HOUR=$(TZ='America/Los_Angeles' date '+%-H')
+          echo "## Ace Magnets — Skipped (outside 6am–9am Pacific window)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This cron entry fired at UTC time, but Pacific local hour was **${PACIFIC_HOUR}:00** — outside the 6am–9am window. This is unexpected; check GitHub Actions for unusual delays." >> $GITHUB_STEP_SUMMARY

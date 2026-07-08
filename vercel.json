@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/run-scheduled-event-emails",
+      "schedule": "0 16 * * *"
+    }
+  ]
+}
