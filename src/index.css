@@ -11,9 +11,9 @@
   --border-focus: rgba(16, 185, 129, 0.4);
   --border-focus-gold: rgba(251, 191, 36, 0.4);
   
-  --color-emerald: #10b981;
-  --color-emerald-rgb: 16, 185, 129;
-  --color-emerald-glow: rgba(16, 185, 129, 0.15);
+  --color-emerald: #fbbf24;
+  --color-emerald-rgb: 251, 191, 36;
+  --color-emerald-glow: rgba(251, 191, 36, 0.15);
   
   --color-gold: #fbbf24;
   --color-gold-rgb: 251, 191, 36;
@@ -30,7 +30,7 @@
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #8fa0b2;
-  --text-emerald: #34d399;
+  --text-emerald: #fbbf24;
   --text-gold: #fbbf24;
 
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -41,7 +41,7 @@
   --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 16px 40px -6px rgba(0, 0, 0, 0.8);
-  --shadow-emerald: 0 0 15px rgba(16, 185, 129, 0.2);
+  --shadow-emerald: 0 0 15px rgba(251, 191, 36, 0.2);
   --shadow-gold: 0 0 15px rgba(251, 191, 36, 0.2);
   
   --transition-fast: 0.15s ease;
@@ -58,12 +58,7 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-main);
-  background-image: url('/bg-felt.png');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background-color: #000000; /* Solid Black */
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -812,8 +807,8 @@ p {
 }
 
 .btn-signup-reg:hover {
-  background-color: #34d399;
-  box-shadow: var(--shadow-emerald);
+  background-color: var(--color-gold);
+  box-shadow: var(--shadow-gold);
 }
 
 .banner-seats-left {
@@ -1800,5 +1795,51 @@ body.display-mode-active .main-content {
   .summary-columns-container > div {
     flex: 1 1 100%;
     min-width: 100%;
+  }
+}
+
+/* ==========================================================================
+   PORTAL LAYOUTS & READABILITY STYLES
+   ========================================================================== */
+
+/* Player Portal (Home Page Layout) - Felt Background */
+.player-portal-layout {
+  background-image: url('/bg-felt.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Admin Portal - Solid Black Background with Thin Gold Outline */
+.admin-portal-layout {
+  background-color: #000000;
+  min-height: 100vh;
+}
+
+.admin-portal-layout .main-content {
+  background-color: #000000 !important;
+  border: 1px solid var(--color-gold) !important;
+  border-radius: 12px !important;
+  margin: 24px 24px 24px 0 !important; /* 24px margins, left aligned with sidebar */
+  padding: 32px !important;
+  box-shadow: 0 4px 24px 0 rgba(251, 191, 36, 0.03) !important;
+}
+
+.admin-portal-layout .sidebar {
+  background-color: #000000 !important;
+  border-right: 1px solid rgba(251, 191, 36, 0.15) !important; /* Gold tinted border */
+}
+
+/* Mobile & Tablet Responsiveness for Admin Outlines */
+@media (max-width: 768px) {
+  .admin-portal-layout .main-content {
+    margin: 16px !important;
+    padding: 20px !important;
+  }
+  .admin-portal-layout .sidebar {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.15) !important;
   }
 }

@@ -3051,7 +3051,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                       <td style={{ padding: '10px 10px', fontWeight: 700, textAlign: 'center', color: 'var(--color-gold)' }}>
                         {pointsEarned} pts
                       </td>
-                      <td style={{ padding: '10px 10px', fontWeight: 600, textAlign: 'center', color: entry.bountiesCollected > 0 ? '#34d399' : 'var(--text-secondary)' }}>
+                      <td style={{ padding: '10px 10px', fontWeight: 600, textAlign: 'center', color: entry.bountiesCollected > 0 ? 'var(--color-gold)' : 'var(--text-secondary)' }}>
                         {entry.bountiesCollected > 0 ? `${entry.bountiesCollected} bounty` + (entry.bountiesCollected > 1 ? 's' : '') : '0'}
                       </td>
                       <td style={{ padding: '10px 10px', fontWeight: 700, textAlign: 'right', color: 'var(--color-emerald)' }}>

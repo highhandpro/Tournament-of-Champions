@@ -1171,7 +1171,7 @@ function App() {
                   width: '56px',
                   height: '56px',
                   borderRadius: '50%',
-                  backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                  backgroundColor: 'rgba(251, 191, 36, 0.1)',
                   border: '2px solid var(--color-emerald)',
                   display: 'flex',
                   alignItems: 'center',
