@@ -27,6 +27,7 @@ export interface TournamentEntry {
   payoutEarned: number;
   bountiesCollected: number;
   pointsEarned: number;
+  referrals?: number;       // Number of new player referrals
   rebuys?: number;
   createdAt?: string;       // ISO timestamp for waitlist sorting
 }

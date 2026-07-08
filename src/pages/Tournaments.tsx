@@ -998,6 +998,20 @@ export const Tournaments: React.FC<TournamentsProps> = ({
     await updateTournament(activeTournament.id, { entries: updatedEntries });
   };
 
+  const handleUpdateReferrals = async (playerId: string, newCount: number) => {
+    if (!activeTournament) return;
+    const updatedEntries = activeTournament.entries.map(e => {
+      if (e.memberId === playerId) {
+        return {
+          ...e,
+          referrals: newCount
+        };
+      }
+      return e;
+    });
+    await updateTournament(activeTournament.id, { entries: updatedEntries });
+  };
+
   // Help getters
   const getMemberName = (id: string) => {
     const m = state.members.find(member => member.id === id);
@@ -2268,6 +2282,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                         <th style={{ textAlign: 'center' }}>Dealer?</th>
                         <th style={{ textAlign: 'center' }}>Buy-in (${activeTournament.buyInAmount})</th>
                         <th style={{ textAlign: 'center' }}>ToC (${activeTournament.dealerAppreciationAmount})</th>
+                        <th style={{ textAlign: 'center' }}>Referrals</th>
                         {activeTournament.status === 'draft' && <th style={{ textAlign: 'right' }}>Action</th>}
                       </tr>
                     </thead>
@@ -2329,6 +2344,27 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                               onChange={() => toggleEntryDealerApp(activeTournament.id, entry.memberId)}
                               style={{ width: '18px', height: '18px', cursor: isSubAdmin ? 'not-allowed' : 'pointer', accentColor: 'var(--color-emerald)' }}
                               disabled={isSubAdmin || (activeTournament.status !== 'draft' && activeTournament.status !== 'active')}
+                            />
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <input
+                              type="number"
+                              min={0}
+                              value={entry.referrals || 0}
+                              onChange={(e) => handleUpdateReferrals(entry.memberId, Math.max(0, parseInt(e.target.value) || 0))}
+                              disabled={isSubAdmin}
+                              style={{
+                                width: '45px',
+                                height: '24px',
+                                textAlign: 'center',
+                                backgroundColor: 'rgba(255,255,255,0.03)',
+                                border: '1px solid var(--border-subtle)',
+                                color: '#ffffff',
+                                borderRadius: '4px',
+                                fontSize: '0.8rem',
+                                padding: '2px',
+                                cursor: isSubAdmin ? 'not-allowed' : 'text'
+                              }}
                             />
                           </td>
                           {!isSubAdmin && activeTournament.status === 'draft' && (
@@ -2804,47 +2840,92 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                                   {name}
                                 </span>
                                 
-                                {/* Bounty Editor Controls */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                                  <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Bounties:</span>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleUpdateBounties(entry.memberId, Math.max(0, entry.bountiesCollected - 1))}
-                                      className="btn btn-secondary"
-                                      style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
-                                      disabled={isSubAdmin}
-                                    >
-                                      -
-                                    </button>
-                                    <input
-                                      type="number"
-                                      min={0}
-                                      value={entry.bountiesCollected}
-                                      onChange={(e) => handleUpdateBounties(entry.memberId, Math.max(0, parseInt(e.target.value) || 0))}
-                                      disabled={isSubAdmin}
-                                      style={{
-                                        width: '36px',
-                                        height: '22px',
-                                        textAlign: 'center',
-                                        backgroundColor: 'rgba(255,255,255,0.03)',
-                                        border: '1px solid var(--border-subtle)',
-                                        color: '#ffffff',
-                                        borderRadius: '4px',
-                                        fontSize: '0.75rem',
-                                        padding: 0,
-                                        cursor: isSubAdmin ? 'not-allowed' : 'text'
-                                      }}
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => handleUpdateBounties(entry.memberId, entry.bountiesCollected + 1)}
-                                      className="btn btn-secondary"
-                                      style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
-                                      disabled={isSubAdmin}
-                                    >
-                                      +
-                                    </button>
+                                {/* Bounty & Referral Editor Controls */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px', flexWrap: 'wrap' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Bounties:</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateBounties(entry.memberId, Math.max(0, entry.bountiesCollected - 1))}
+                                        className="btn btn-secondary"
+                                        style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
+                                        disabled={isSubAdmin}
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        value={entry.bountiesCollected}
+                                        onChange={(e) => handleUpdateBounties(entry.memberId, Math.max(0, parseInt(e.target.value) || 0))}
+                                        disabled={isSubAdmin}
+                                        style={{
+                                          width: '36px',
+                                          height: '22px',
+                                          textAlign: 'center',
+                                          backgroundColor: 'rgba(255,255,255,0.03)',
+                                          border: '1px solid var(--border-subtle)',
+                                          color: '#ffffff',
+                                          borderRadius: '4px',
+                                          fontSize: '0.75rem',
+                                          padding: 0,
+                                          cursor: isSubAdmin ? 'not-allowed' : 'text'
+                                        }}
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateBounties(entry.memberId, entry.bountiesCollected + 1)}
+                                        className="btn btn-secondary"
+                                        style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
+                                        disabled={isSubAdmin}
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Referrals:</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateReferrals(entry.memberId, Math.max(0, (entry.referrals || 0) - 1))}
+                                        className="btn btn-secondary"
+                                        style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
+                                        disabled={isSubAdmin}
+                                      >
+                                        -
+                                      </button>
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        value={entry.referrals || 0}
+                                        onChange={(e) => handleUpdateReferrals(entry.memberId, Math.max(0, parseInt(e.target.value) || 0))}
+                                        disabled={isSubAdmin}
+                                        style={{
+                                          width: '36px',
+                                          height: '22px',
+                                          textAlign: 'center',
+                                          backgroundColor: 'rgba(255,255,255,0.03)',
+                                          border: '1px solid var(--border-subtle)',
+                                          color: '#ffffff',
+                                          borderRadius: '4px',
+                                          fontSize: '0.75rem',
+                                          padding: 0,
+                                          cursor: isSubAdmin ? 'not-allowed' : 'text'
+                                        }}
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateReferrals(entry.memberId, (entry.referrals || 0) + 1)}
+                                        className="btn btn-secondary"
+                                        style={{ width: '22px', height: '22px', padding: 0, minHeight: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '0.75rem', cursor: isSubAdmin ? 'not-allowed' : 'pointer' }}
+                                        disabled={isSubAdmin}
+                                      >
+                                        +
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -2884,7 +2965,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
         // Calculate total stats for calculations
         const buyInCount = activeTournament.entries.filter(e => e.hasBuyIn).length;
         const N = buyInCount;
-        const attendancePoints = state.settings.pointsBaseAttendance;
+        const effectiveN = Math.max(11, N);
+        const attendancePoints = 2; // Flat 2 points for participating
         const addonCount = activeTournament.totalAddons !== undefined 
           ? activeTournament.totalAddons 
           : activeTournament.entries.filter(e => e.hasAddon).length;
@@ -2945,14 +3027,14 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   
                   // Live dynamic calculations
                   const payoutEarned = payouts[pos - 1] || 0;
-                  const basePositionPoints = N - pos + 1;
+                  const basePositionPoints = effectiveN - pos + 1;
                   let multiplier = 1;
                   if (pos === 1) {
                     multiplier = 3;
                   } else if (pos >= 2 && pos <= 10) {
                     multiplier = 2;
                   }
-                  const pointsEarned = (basePositionPoints * multiplier) + (entry.bountiesCollected * 3) + attendancePoints;
+                  const pointsEarned = (basePositionPoints * multiplier) + ((entry.referrals || 0) * 3) + attendancePoints;
                   const moneyReceived = payoutEarned + (entry.bountiesCollected * activeTournament.bountyAmount);
 
                   return (

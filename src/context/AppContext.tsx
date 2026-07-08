@@ -942,20 +942,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const payouts = pctList.map(pct => Math.round(payoutPrizePool * (pct / 100)));
 
     const N = buyInCount;
-    const attendancePoints = state.settings.pointsBaseAttendance;
+    const effectiveN = Math.max(11, N);
+    const attendancePoints = 2; // 2 points for participating
 
     updatedEntries = updatedEntries.map(e => {
       const pos = e.finishPosition || N;
       const payoutEarned = payouts[pos - 1] || 0;
 
-      const basePositionPoints = N - pos + 1;
+      const basePositionPoints = effectiveN - pos + 1;
       let multiplier = 1;
       if (pos === 1) {
         multiplier = 3;
       } else if (pos >= 2 && pos <= 10) {
         multiplier = 2;
       }
-      const pointsEarned = (basePositionPoints * multiplier) + (e.bountiesCollected * 3) + attendancePoints;
+      const pointsEarned = (basePositionPoints * multiplier) + ((e.referrals || 0) * 3) + attendancePoints;
 
       return {
         ...e,

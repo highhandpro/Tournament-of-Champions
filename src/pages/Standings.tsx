@@ -96,14 +96,25 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
       </div>
 
       {/* Season Select & Configuration */}
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+      <div style={{
+        display: 'flex',
+        gap: '24px',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(212, 175, 55, 0.2)', // gold tinted border
+        padding: '16px 24px',
+        borderRadius: '12px',
+        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+      }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Select Season</span>
+          <span style={{ fontSize: '0.8rem', color: '#e5e7eb', fontWeight: 600 }}>Select Season</span>
           <select
             value={selectedSeasonId}
             onChange={(e) => setSelectedSeasonId(e.target.value)}
             className="form-input"
-            style={{ width: '220px', cursor: 'pointer', paddingRight: '36px' }}
+            style={{ width: '220px', cursor: 'pointer', paddingRight: '36px', backgroundColor: 'rgba(0,0,0,0.4)', color: '#ffffff', borderColor: 'rgba(255,255,255,0.1)' }}
           >
             {state.seasons.map(s => (
               <option key={s.id} value={s.id}>
@@ -118,26 +129,25 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
             display: 'flex',
             gap: '16px',
             alignItems: 'center',
-            backgroundColor: 'rgba(255,255,255,0.02)',
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
             padding: '12px 20px',
             borderRadius: '10px',
-            border: '1px solid var(--border-subtle)',
-            marginTop: '22px'
+            border: '1px solid rgba(255, 255, 255, 0.08)'
           }}>
-            <Calendar size={18} style={{ color: 'var(--text-secondary)' }} />
-            <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Duration: <strong>{formatDate(activeSeason.startDate)}</strong> to <strong>{formatDate(activeSeason.endDate)}</strong>
-              <span style={{ margin: '0 12px', color: 'var(--border-subtle)' }}>|</span>
-              Season ToC Pool: <strong style={{ color: 'var(--color-gold)' }}>${seasonToCPool}</strong>
+            <Calendar size={18} style={{ color: 'var(--color-gold)' }} />
+            <span style={{ fontSize: '0.9rem', color: '#f3f4f6' }}>
+              Duration: <strong style={{ color: '#ffffff' }}>{formatDate(activeSeason.startDate)}</strong> to <strong style={{ color: '#ffffff' }}>{formatDate(activeSeason.endDate)}</strong>
+              <span style={{ margin: '0 12px', color: 'rgba(255, 255, 255, 0.15)' }}>|</span>
+              Season ToC Pool: <strong style={{ color: 'var(--color-gold)', fontSize: '1rem' }}>${seasonToCPool}</strong>
             </span>
             {activeSeason.isActive ? (
-              <span className="badge badge-gold">Active Season</span>
+              <span className="badge badge-gold" style={{ margin: 0 }}>Active Season</span>
             ) : (
               isChiefAdmin && (
                 <button 
                   onClick={() => handleSetSeasonActive(activeSeason.id)}
                   className="btn btn-ghost" 
-                  style={{ fontSize: '0.8rem', padding: '4px 8px' }}
+                  style={{ fontSize: '0.8rem', padding: '4px 8px', color: 'var(--color-gold)' }}
                 >
                   Set as Active Season
                 </button>
