@@ -59,6 +59,10 @@ export const Tournaments: React.FC<TournamentsProps> = ({
   const [addon, setAddon] = useState(state.settings.defaultAddon);
   const [bounty, setBounty] = useState(state.settings.defaultBounty);
   const [dealerApp, setDealerApp] = useState(state.settings.defaultDealerAppreciation);
+  const [foodAmount, setFoodAmount] = useState(5);
+  const [startingChips, setStartingChips] = useState(8500);
+  const [addonTocAmount, setAddonTocAmount] = useState(5);
+  const [finalTableSeats, setFinalTableSeats] = useState(10);
 
   // Active Sub-tab inside Selected Tournament
   // draft: 'checkin' | 'seating'
@@ -124,11 +128,14 @@ export const Tournaments: React.FC<TournamentsProps> = ({
   const [editHighHand, setEditHighHand] = useState(100);
   const [editFlyerUrl, setEditFlyerUrl] = useState('');
   const [editFlyerType, setEditFlyerType] = useState<'pdf' | 'image' | null>(null);
+  const [editFoodAmount, setEditFoodAmount] = useState(5);
+  const [editStartingChips, setEditStartingChips] = useState(8500);
+  const [editAddonTocAmount, setEditAddonTocAmount] = useState(5);
+  const [editFinalTableSeats, setEditFinalTableSeats] = useState(10);
 
   // Create Tournament states
   const [tourTime, setTourTime] = useState('7:00 PM');
   const [tourLocation, setTourLocation] = useState('Wasougal Eagles Club');
-  const [tourStartingStack, setTourStartingStack] = useState('20,000 Starting Chips');
   const [tourRoundLength, setTourRoundLength] = useState(15);
   const [tourRebuys, setTourRebuys] = useState('None');
   const [tourLateEntry, setTourLateEntry] = useState('Allowed');
@@ -718,14 +725,18 @@ export const Tournaments: React.FC<TournamentsProps> = ({
       payoutPcts,
       tourTime,
       tourLocation,
-      tourStartingStack,
+      startingChips ? `${startingChips.toLocaleString()} Starting Chips` : '8,500 Starting Chips',
       tourRoundLength,
       tourRebuys,
       tourLateEntry,
       tourAddonChips,
       tourFlyerUrl,
       tourFlyerType,
-      tourHighHand
+      tourHighHand,
+      foodAmount,
+      startingChips,
+      addonTocAmount,
+      finalTableSeats
     );
     setIsCreateTourOpen(false);
     setSelectedTournamentId(newId);
@@ -755,6 +766,10 @@ export const Tournaments: React.FC<TournamentsProps> = ({
     setEditHighHand(activeTournament.highHandAmount !== undefined ? activeTournament.highHandAmount : 100);
     setEditFlyerUrl(activeTournament.flyerUrl || '');
     setEditFlyerType(activeTournament.flyerType || null);
+    setEditFoodAmount(activeTournament.foodAmount || 0);
+    setEditStartingChips(activeTournament.startingChips || 8500);
+    setEditAddonTocAmount(activeTournament.addonTocAmount || 0);
+    setEditFinalTableSeats(activeTournament.finalTableSeats || 10);
     setIsEditTourDetailsOpen(true);
   };
 
@@ -779,7 +794,11 @@ export const Tournaments: React.FC<TournamentsProps> = ({
       maxPlayers: editMaxPlayers,
       highHandAmount: editHighHand,
       flyerUrl: editFlyerUrl,
-      flyerType: editFlyerType
+      flyerType: editFlyerType,
+      foodAmount: editFoodAmount,
+      startingChips: editStartingChips,
+      addonTocAmount: editAddonTocAmount,
+      finalTableSeats: editFinalTableSeats
     });
     
     setIsEditTourDetailsOpen(false);
@@ -1068,52 +1087,22 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               Back to Registry
             </button>
           </div>
-
-          <form onSubmit={handleCreateTournament} style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.1fr 1fr', gap: '24px' }}>
+          <form onSubmit={handleCreateTournament} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             
-            {/* Column 1: General Info & Financials */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 6px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px' }}>General & Financials</h4>
-              
+            {/* General Info Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontWeight: 600 }}>Tournament Name / Number</label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Season 4, Game 2"
+                  placeholder="e.g. July Tournament"
                   value={tourName}
                   onChange={(e) => setTourName(e.target.value)}
                   className="form-input"
-                  style={{ padding: '10px 14px' }}
+                  style={{ padding: '8px 12px' }}
                 />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={tourDate}
-                    onChange={(e) => setTourDate(e.target.value)}
-                    onClick={(e) => { try { e.currentTarget.showPicker?.(); } catch (err) { console.warn(err); } }}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Time</label>
-                  <input
-                    type="text"
-                    required
-                    value={tourTime}
-                    onChange={(e) => setTourTime(e.target.value)}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-              </div>
-
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label style={{ fontWeight: 600 }}>Location</label>
                 <input
@@ -1122,111 +1111,204 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   value={tourLocation}
                   onChange={(e) => setTourLocation(e.target.value)}
                   className="form-input"
-                  style={{ padding: '10px 14px' }}
+                  style={{ padding: '8px 12px' }}
                 />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Buy-in ($)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={buyIn}
-                    onChange={(e) => setBuyIn(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Add-on ($)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={addon}
-                    onChange={(e) => setAddon(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 600 }}>Level (mins)</label>
+                <input
+                  type="number"
+                  min={1}
+                  required
+                  value={tourRoundLength}
+                  onChange={(e) => setTourRoundLength(Number(e.target.value))}
+                  className="form-input"
+                  style={{ padding: '8px 12px' }}
+                />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Bounty ($)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={bounty}
-                    onChange={(e) => setBounty(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>ToC Fee ($)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={dealerApp}
-                    onChange={(e) => setDealerApp(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>High Hand Deduction ($)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    required
-                    value={tourHighHand}
-                    onChange={(e) => setTourHighHand(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Max Seats / Players Limit</label>
-                  <input
-                    type="number"
-                    min={2}
-                    required
-                    value={tourMaxPlayers}
-                    onChange={(e) => setTourMaxPlayers(Number(e.target.value))}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 600 }}>High Hand Deduction ($)</label>
+                <input
+                  type="number"
+                  min={0}
+                  required
+                  value={tourHighHand}
+                  onChange={(e) => setTourHighHand(Number(e.target.value))}
+                  className="form-input"
+                  style={{ padding: '8px 12px' }}
+                />
               </div>
             </div>
 
-            {/* Column 2: Chips, Rules & Flyer */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 6px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px' }}>Chips, Formats & Flyer</h4>
-              
+            {/* Flyer Info Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
-                <label style={{ fontWeight: 600 }}>Starting Stack Description</label>
+                <label style={{ fontWeight: 600 }}>Flyer / PDF URL (Google Drive)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. https://drive.google.com/..."
+                  value={tourFlyerUrl}
+                  onChange={(e) => setTourFlyerUrl(e.target.value)}
+                  className="form-input"
+                  style={{ padding: '8px 12px' }}
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 600 }}>Flyer Type</label>
+                <select
+                  value={tourFlyerType || ''}
+                  onChange={(e) => setTourFlyerType((e.target.value as any) || null)}
+                  className="form-input"
+                  style={{ padding: '8px 12px', cursor: 'pointer' }}
+                >
+                  <option value="">None</option>
+                  <option value="pdf">PDF</option>
+                  <option value="image">Image</option>
+                </select>
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 600 }}>Rebuys</label>
                 <input
                   type="text"
                   required
-                  value={tourStartingStack}
-                  onChange={(e) => setTourStartingStack(e.target.value)}
+                  value={tourRebuys}
+                  onChange={(e) => setTourRebuys(e.target.value)}
                   className="form-input"
-                  style={{ padding: '10px 14px' }}
+                  style={{ padding: '8px 12px' }}
                 />
               </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ fontWeight: 600 }}>Late Entry</label>
+                <input
+                  type="text"
+                  required
+                  value={tourLateEntry}
+                  onChange={(e) => setTourLateEntry(e.target.value)}
+                  className="form-input"
+                  style={{ padding: '8px 12px' }}
+                />
+              </div>
+            </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+            {/* TOURNAMENT SETUP FIELDS (MATCHING THE SCREENSHOT) */}
+            <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', backgroundColor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(251,191,36,0.1)' }}>
+              <h4 style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: 0, fontWeight: 700 }}>
+                Tournament Setup
+              </h4>
+              
+              {/* Setup Row 1: 9 Columns */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: '12px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Add-on Chips Count</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>EVENT DATE</label>
+                  <input
+                    type="date"
+                    required
+                    value={tourDate}
+                    onChange={(e) => setTourDate(e.target.value)}
+                    className="form-input"
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>TIME</label>
+                  <input
+                    type="text"
+                    required
+                    value={tourTime}
+                    onChange={(e) => setTourTime(e.target.value)}
+                    className="form-input"
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>BUY-IN</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={buyIn}
+                      onChange={(e) => setBuyIn(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>TOC</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={dealerApp}
+                      onChange={(e) => setDealerApp(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>FOOD</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={foodAmount}
+                      onChange={(e) => setFoodAmount(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>STARTING CHIPS</label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={startingChips}
+                    onChange={(e) => setStartingChips(Number(e.target.value))}
+                    className="form-input"
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={addon}
+                      onChange={(e) => setAddon(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON TOC</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={addonTocAmount}
+                      onChange={(e) => setAddonTocAmount(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON CHIPS</label>
                   <input
                     type="number"
                     min={0}
@@ -1234,83 +1316,47 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                     value={tourAddonChips}
                     onChange={(e) => setTourAddonChips(Number(e.target.value))}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                   />
                 </div>
+              </div>
+
+              {/* Setup Row 2: 9 Columns (First two used) */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: '12px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Level (mins)</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>FINAL TABLE SEATS</label>
                   <input
                     type="number"
-                    min={1}
+                    min={2}
+                    max={12}
                     required
-                    value={tourRoundLength}
-                    onChange={(e) => setTourRoundLength(Number(e.target.value))}
+                    value={finalTableSeats}
+                    onChange={(e) => setFinalTableSeats(Number(e.target.value))}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                   />
                 </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Rebuys</label>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>MAX PLAYERS</label>
                   <input
-                    type="text"
+                    type="number"
+                    min={2}
                     required
-                    value={tourRebuys}
-                    onChange={(e) => setTourRebuys(e.target.value)}
+                    value={tourMaxPlayers}
+                    onChange={(e) => setTourMaxPlayers(Number(e.target.value))}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                   />
                 </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Late Entry</label>
-                  <input
-                    type="text"
-                    required
-                    value={tourLateEntry}
-                    onChange={(e) => setTourLateEntry(e.target.value)}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-              </div>
-
-
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '12px' }}>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Flyer / PDF URL (Google Drive)</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. https://drive.google.com/..."
-                    value={tourFlyerUrl}
-                    onChange={(e) => setTourFlyerUrl(e.target.value)}
-                    className="form-input"
-                    style={{ padding: '10px 14px' }}
-                  />
-                </div>
-                <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Flyer Type</label>
-                  <select
-                    value={tourFlyerType || ''}
-                    onChange={(e) => setTourFlyerType((e.target.value as any) || null)}
-                    className="form-input"
-                    style={{ padding: '10px 14px', cursor: 'pointer' }}
-                  >
-                    <option value="">None</option>
-                    <option value="pdf">PDF</option>
-                    <option value="image">Image</option>
-                  </select>
-                </div>
+                <div style={{ gridColumn: 'span 7' }}></div>
               </div>
             </div>
 
-            {/* Column 3: Payout Structure & Actions */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 6px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px' }}>Payout percentages</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', maxHeight: '180px', overflowY: 'auto', paddingRight: '4px', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px', backgroundColor: 'rgba(0,0,0,0.1)' }}>
-                {[1, 6, 2, 7, 3, 8, 4, 9, 5, 10].map(place => (
+            {/* Payout Percentages Section */}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px' }}>
+              <h4 style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 12px 0', fontWeight: 700 }}>Payout Percentages</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', padding: '16px', backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: '8px' }}>
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(place => (
                   <div key={place} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontSize: '0.85rem', width: '36px', textAlign: 'right' }}>{place === 1 ? '1st' : place === 2 ? '2nd' : place === 3 ? '3rd' : `${place}th`}:</span>
                     <input
@@ -1647,19 +1693,20 @@ export const Tournaments: React.FC<TournamentsProps> = ({
   const bountyCount = activeTournament.entries.filter(e => e.hasBuyIn).length;
   const dealerCount = activeTournament.entries.filter(e => e.hasDealerAppreciation).length;
 
-  const netBuyIn = activeTournament.buyInAmount - activeTournament.bountyAmount - activeTournament.dealerAppreciationAmount;
-  const rawPrizePool = (buyInCount * netBuyIn) + (addonCount * activeTournament.addonAmount);
+  const netBuyIn = activeTournament.buyInAmount - (activeTournament.bountyAmount || 0) - (activeTournament.dealerAppreciationAmount || 0) - (activeTournament.foodAmount || 0);
+  const netAddon = activeTournament.addonAmount - (activeTournament.addonTocAmount || 0);
+  const rawPrizePool = (buyInCount * netBuyIn) + (addonCount * netAddon);
   const currentPrizePool = activeTournament.status === 'completed' 
     ? activeTournament.totalPrizePool 
     : Math.max(0, rawPrizePool - (activeTournament.highHandAmount || 0));
 
   const currentBountyPool = activeTournament.status === 'completed'
     ? activeTournament.totalBountyPool
-    : bountyCount * activeTournament.bountyAmount;
+    : bountyCount * (activeTournament.bountyAmount || 0);
 
   const currentDealerPool = activeTournament.status === 'completed'
     ? activeTournament.totalDealerAppreciation
-    : dealerCount * activeTournament.dealerAppreciationAmount;
+    : (dealerCount * (activeTournament.dealerAppreciationAmount || 0)) + (addonCount * (activeTournament.addonTocAmount || 0));
 
   return (
     <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -2414,10 +2461,10 @@ export const Tournaments: React.FC<TournamentsProps> = ({
           {/* Configure Game Pricing (if draft and not sub-admin) */}
           {activeTournament.status === 'draft' && !isSubAdmin && (
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <h4 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Configure Game Pricing</h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Configure Game Pricing & Setup</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Buy-In ($)</label>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>BUY-IN ($)</label>
                   <input
                     type="number"
                     min={0}
@@ -2429,7 +2476,43 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Add-On ($)</label>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>TOC ($)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={activeTournament.dealerAppreciationAmount}
+                    onChange={(e) => updateTournament(activeTournament.id, { dealerAppreciationAmount: Number(e.target.value) })}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                    disabled={isSubAdmin}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>FOOD ($)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={activeTournament.foodAmount || 0}
+                    onChange={(e) => updateTournament(activeTournament.id, { foodAmount: Number(e.target.value) })}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                    disabled={isSubAdmin}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>STARTING CHIPS</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={activeTournament.startingChips || 8500}
+                    onChange={(e) => updateTournament(activeTournament.id, { startingChips: Number(e.target.value) })}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                    disabled={isSubAdmin}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ADD-ON ($)</label>
                   <input
                     type="number"
                     min={0}
@@ -2441,24 +2524,48 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Bounty ($)</label>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ADD-ON TOC ($)</label>
                   <input
                     type="number"
                     min={0}
-                    value={activeTournament.bountyAmount}
-                    onChange={(e) => updateTournament(activeTournament.id, { bountyAmount: Number(e.target.value) })}
+                    value={activeTournament.addonTocAmount || 0}
+                    onChange={(e) => updateTournament(activeTournament.id, { addonTocAmount: Number(e.target.value) })}
                     className="form-input"
                     style={{ padding: '8px 12px' }}
                     disabled={isSubAdmin}
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ToC ($)</label>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>ADD-ON CHIPS</label>
                   <input
                     type="number"
                     min={0}
-                    value={activeTournament.dealerAppreciationAmount}
-                    onChange={(e) => updateTournament(activeTournament.id, { dealerAppreciationAmount: Number(e.target.value) })}
+                    value={activeTournament.addonChips || 3500}
+                    onChange={(e) => updateTournament(activeTournament.id, { addonChips: Number(e.target.value) })}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                    disabled={isSubAdmin}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>FINAL TABLE SEATS</label>
+                  <input
+                    type="number"
+                    min={2}
+                    value={activeTournament.finalTableSeats || 10}
+                    onChange={(e) => updateTournament(activeTournament.id, { finalTableSeats: Number(e.target.value) })}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                    disabled={isSubAdmin}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>MAX PLAYERS</label>
+                  <input
+                    type="number"
+                    min={2}
+                    value={activeTournament.maxPlayers}
+                    onChange={(e) => updateTournament(activeTournament.id, { maxPlayers: Number(e.target.value) })}
                     className="form-input"
                     style={{ padding: '8px 12px' }}
                     disabled={isSubAdmin}
@@ -2970,8 +3077,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
         const addonCount = activeTournament.totalAddons !== undefined 
           ? activeTournament.totalAddons 
           : activeTournament.entries.filter(e => e.hasAddon).length;
-        const netBuyInContribution = activeTournament.buyInAmount - activeTournament.bountyAmount - activeTournament.dealerAppreciationAmount;
-        const totalPrizePool = Math.max(0, (buyInCount * netBuyInContribution) + (addonCount * activeTournament.addonAmount) - (activeTournament.highHandAmount || 0));
+        const netBuyInContribution = activeTournament.buyInAmount - (activeTournament.bountyAmount || 0) - (activeTournament.dealerAppreciationAmount || 0) - (activeTournament.foodAmount || 0);
+        const netAddonContribution = activeTournament.addonAmount - (activeTournament.addonTocAmount || 0);
+        const totalPrizePool = Math.max(0, (buyInCount * netBuyInContribution) + (addonCount * netAddonContribution) - (activeTournament.highHandAmount || 0));
         const payoutPrizePool = activeTournament.overridePrizePool !== undefined && activeTournament.overridePrizePool > 0
           ? activeTournament.overridePrizePool
           : totalPrizePool;
@@ -3157,8 +3265,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   <div style={{ backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {(() => {
                       const countAddons = activeTournament.totalAddons !== undefined ? activeTournament.totalAddons : activeTournament.entries.filter(e => e.hasAddon).length;
-                      const netBuyIn = activeTournament.buyInAmount - activeTournament.bountyAmount - activeTournament.dealerAppreciationAmount;
-              const rawCalcPrizePool = (activeTournament.entries.filter(e => e.hasBuyIn).length * netBuyIn) + (countAddons * activeTournament.addonAmount);
+                      const netBuyIn = activeTournament.buyInAmount - (activeTournament.bountyAmount || 0) - (activeTournament.dealerAppreciationAmount || 0) - (activeTournament.foodAmount || 0);
+                      const netAddon = activeTournament.addonAmount - (activeTournament.addonTocAmount || 0);
+                      const rawCalcPrizePool = (activeTournament.entries.filter(e => e.hasBuyIn).length * netBuyIn) + (countAddons * netAddon);
               const calcPrizePool = Math.max(0, rawCalcPrizePool - (activeTournament.highHandAmount || 0));
                       const finalPool = activeTournament.overridePrizePool !== undefined && activeTournament.overridePrizePool > 0
                         ? activeTournament.overridePrizePool
@@ -3699,8 +3808,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '16px', backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: '8px', padding: '12px' }}>
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 600, margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Live Payout Breakdown</h4>
                 {(() => {
-                  const netBuyIn = activeTournament.buyInAmount - activeTournament.bountyAmount - activeTournament.dealerAppreciationAmount;
-          const rawCalculatedPrizePool = (buyInCount * netBuyIn) + (modalAddons * activeTournament.addonAmount);
+                  const netBuyIn = activeTournament.buyInAmount - (activeTournament.bountyAmount || 0) - (activeTournament.dealerAppreciationAmount || 0) - (activeTournament.foodAmount || 0);
+                  const netAddon = activeTournament.addonAmount - (activeTournament.addonTocAmount || 0);
+                  const rawCalculatedPrizePool = (buyInCount * netBuyIn) + (modalAddons * netAddon);
           const calculatedPrizePool = Math.max(0, rawCalculatedPrizePool - (activeTournament.highHandAmount || 0));
                   const previewRows = modalPayoutPcts.map((pct, idx) => {
                     if (pct <= 0) return null;
@@ -3814,12 +3924,10 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleSaveTourDetails} style={{ display: 'grid', gridTemplateColumns: '1.1fr 1.1fr 1fr', gap: '24px' }}>
+            <form onSubmit={handleSaveTourDetails} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {/* Column 1: General Info & Financials */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 6px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px' }}>General & Financials</h4>
-                
+              {/* Row 1: General Settings */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontWeight: 600 }}>Tournament Name / Number</label>
                   <input
@@ -3828,36 +3936,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                     value={editTourName}
                     onChange={(e) => setEditTourName(e.target.value)}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 12px' }}
                   />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={editTourDate}
-                      onChange={(e) => setEditTourDate(e.target.value)}
-                      onClick={(e) => { try { e.currentTarget.showPicker?.(); } catch (err) { console.warn(err); } }}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Time</label>
-                    <input
-                      type="text"
-                      required
-                      value={editTime}
-                      onChange={(e) => setEditTime(e.target.value)}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                </div>
-
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label style={{ fontWeight: 600 }}>Location</label>
                   <input
@@ -3866,111 +3947,204 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                     value={editLocation}
                     onChange={(e) => setEditLocation(e.target.value)}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 12px' }}
                   />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Buy-in ($)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      required
-                      value={editBuyIn}
-                      onChange={(e) => setEditBuyIn(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Add-on ($)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      required
-                      value={editAddon}
-                      onChange={(e) => setEditAddon(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 600 }}>Level (mins)</label>
+                  <input
+                    type="number"
+                    min={1}
+                    required
+                    value={editRoundLength}
+                    onChange={(e) => setEditRoundLength(Number(e.target.value))}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                  />
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Bounty ($)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      required
-                      value={editBounty}
-                      onChange={(e) => setEditBounty(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>ToC Fee ($)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      required
-                      value={editDealerApp}
-                      onChange={(e) => setEditDealerApp(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>High Hand Deduction ($)</label>
-                    <input
-                      type="number"
-                      min={0}
-                      required
-                      value={editHighHand}
-                      onChange={(e) => setEditHighHand(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Max Seats / Players Limit</label>
-                    <input
-                      type="number"
-                      min={2}
-                      required
-                      value={editMaxPlayers}
-                      onChange={(e) => setEditMaxPlayers(Number(e.target.value))}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 600 }}>High Hand Deduction ($)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={editHighHand}
+                    onChange={(e) => setEditHighHand(Number(e.target.value))}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                  />
                 </div>
               </div>
 
-              {/* Column 2: Chips, Rules & Flyer */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: '0 0 6px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '4px' }}>Chips, Formats & Flyer</h4>
-                
+              {/* Row 1b: Flyer & Format */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '16px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label style={{ fontWeight: 600 }}>Starting Stack Description</label>
+                  <label style={{ fontWeight: 600 }}>Flyer / PDF URL (Google Drive)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. https://drive.google.com/..."
+                    value={editFlyerUrl}
+                    onChange={(e) => setEditFlyerUrl(e.target.value)}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                  />
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 600 }}>Flyer Type</label>
+                  <select
+                    value={editFlyerType || ''}
+                    onChange={(e) => setEditFlyerType((e.target.value as any) || null)}
+                    className="form-input"
+                    style={{ padding: '8px 12px', cursor: 'pointer' }}
+                  >
+                    <option value="">None</option>
+                    <option value="pdf">PDF</option>
+                    <option value="image">Image</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 600 }}>Rebuys</label>
                   <input
                     type="text"
                     required
-                    value={editStartingStack}
-                    onChange={(e) => setEditStartingStack(e.target.value)}
+                    value={editRebuys}
+                    onChange={(e) => setEditRebuys(e.target.value)}
                     className="form-input"
-                    style={{ padding: '10px 14px' }}
+                    style={{ padding: '8px 12px' }}
                   />
                 </div>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                  <label style={{ fontWeight: 600 }}>Late Entry</label>
+                  <input
+                    type="text"
+                    required
+                    value={editLateEntry}
+                    onChange={(e) => setEditLateEntry(e.target.value)}
+                    className="form-input"
+                    style={{ padding: '8px 12px' }}
+                  />
+                </div>
+              </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
+              {/* TOURNAMENT SETUP FIELDS (MATCHING THE SCREENSHOT) */}
+              <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px', backgroundColor: 'rgba(0,0,0,0.2)', border: '1px solid rgba(251,191,36,0.1)' }}>
+                <h4 style={{ fontSize: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gold)', margin: 0, fontWeight: 700 }}>
+                  Tournament Setup
+                </h4>
+                
+                {/* Setup Row 1: 9 Columns */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: '12px' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Add-on Chips Count</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>EVENT DATE</label>
+                    <input
+                      type="date"
+                      required
+                      value={editTourDate}
+                      onChange={(e) => setEditTourDate(e.target.value)}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>TIME</label>
+                    <input
+                      type="text"
+                      required
+                      value={editTime}
+                      onChange={(e) => setEditTime(e.target.value)}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>BUY-IN</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editBuyIn}
+                        onChange={(e) => setEditBuyIn(Number(e.target.value))}
+                        className="form-input"
+                        style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>TOC</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editDealerApp}
+                        onChange={(e) => setEditDealerApp(Number(e.target.value))}
+                        className="form-input"
+                        style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>FOOD</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editFoodAmount}
+                        onChange={(e) => setEditFoodAmount(Number(e.target.value))}
+                        className="form-input"
+                        style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>STARTING CHIPS</label>
+                    <input
+                      type="number"
+                      min={0}
+                      required
+                      value={editStartingChips}
+                      onChange={(e) => setEditStartingChips(Number(e.target.value))}
+                      className="form-input"
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
+                    />
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editAddon}
+                        onChange={(e) => setEditAddon(Number(e.target.value))}
+                        className="form-input"
+                        style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON TOC</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>$</span>
+                      <input
+                        type="number"
+                        min={0}
+                        required
+                        value={editAddonTocAmount}
+                        onChange={(e) => setEditAddonTocAmount(Number(e.target.value))}
+                        className="form-input"
+                        style={{ padding: '8px 10px', fontSize: '0.85rem', flex: 1 }}
+                      />
+                    </div>
+                  </div>
+                  <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>ADD-ON CHIPS</label>
                     <input
                       type="number"
                       min={0}
@@ -3978,97 +4152,59 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                       value={editAddonChips}
                       onChange={(e) => setEditAddonChips(Number(e.target.value))}
                       className="form-input"
-                      style={{ padding: '10px 14px' }}
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                     />
                   </div>
+                </div>
+
+                {/* Setup Row 2: 9 Columns (First two used) */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(9, 1fr)', gap: '12px' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Level (mins)</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>FINAL TABLE SEATS</label>
                     <input
                       type="number"
-                      min={1}
+                      min={2}
+                      max={12}
                       required
-                      value={editRoundLength}
-                      onChange={(e) => setEditRoundLength(Number(e.target.value))}
+                      value={editFinalTableSeats}
+                      onChange={(e) => setEditFinalTableSeats(Number(e.target.value))}
                       className="form-input"
-                      style={{ padding: '10px 14px' }}
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                     />
                   </div>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                   <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Rebuys</label>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>MAX PLAYERS</label>
                     <input
-                      type="text"
+                      type="number"
+                      min={2}
                       required
-                      value={editRebuys}
-                      onChange={(e) => setEditRebuys(e.target.value)}
+                      value={editMaxPlayers}
+                      onChange={(e) => setEditMaxPlayers(Number(e.target.value))}
                       className="form-input"
-                      style={{ padding: '10px 14px' }}
+                      style={{ padding: '8px 10px', fontSize: '0.85rem' }}
                     />
                   </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Late Entry</label>
-                    <input
-                      type="text"
-                      required
-                      value={editLateEntry}
-                      onChange={(e) => setEditLateEntry(e.target.value)}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                </div>
-
-
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '12px' }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Flyer / PDF URL (Google Drive)</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. https://drive.google.com/..."
-                      value={editFlyerUrl}
-                      onChange={(e) => setEditFlyerUrl(e.target.value)}
-                      className="form-input"
-                      style={{ padding: '10px 14px' }}
-                    />
-                  </div>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label style={{ fontWeight: 600 }}>Flyer Type</label>
-                    <select
-                      value={editFlyerType || ''}
-                      onChange={(e) => setEditFlyerType((e.target.value as any) || null)}
-                      className="form-input"
-                      style={{ padding: '10px 14px', cursor: 'pointer' }}
-                    >
-                      <option value="">None</option>
-                      <option value="pdf">PDF</option>
-                      <option value="image">Image</option>
-                    </select>
-                  </div>
+                  <div style={{ gridColumn: 'span 7' }}></div>
                 </div>
               </div>
 
-              {/* Column 3: Actions Only (making layout balanced) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', justifyContent: 'flex-end', height: '100%' }}>
-                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', width: '100%', paddingBottom: '12px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setIsEditTourDetailsOpen(false)}
-                    className="btn btn-secondary"
-                    style={{ padding: '10px 20px' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    style={{ padding: '10px 20px' }}
-                  >
-                    Save Changes
-                  </button>
-                </div>
+              {/* Actions Row */}
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', borderTop: '1px solid var(--border-subtle)', paddingTop: '20px' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsEditTourDetailsOpen(false)}
+                  className="btn btn-secondary"
+                  style={{ padding: '10px 20px' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ padding: '10px 20px' }}
+                >
+                  Save Changes
+                </button>
               </div>
             </form>
           </div>

@@ -68,6 +68,12 @@ export interface Tournament {
   seating?: Record<string, string[]>;
   dealers?: Record<string, string>;
   preassignedDealers?: string[];
+
+  // New setup fields
+  foodAmount?: number;
+  startingChips?: number;
+  addonTocAmount?: number;
+  finalTableSeats?: number;
 }
 
 export interface Season {

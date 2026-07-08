@@ -39,7 +39,11 @@ interface AppContextProps {
     addonChips?: number,
     flyerUrl?: string,
     flyerType?: 'pdf' | 'image' | null,
-    highHandAmount?: number
+    highHandAmount?: number,
+    foodAmount?: number,
+    startingChips?: number,
+    addonTocAmount?: number,
+    finalTableSeats?: number
   ) => string;
   updateTournament: (id: string, updated: Partial<Tournament>) => void;
   deleteTournament: (id: string) => void;
@@ -655,7 +659,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     addonChips?: number,
     flyerUrl?: string,
     flyerType?: 'pdf' | 'image' | null,
-    highHandAmount?: number
+    highHandAmount?: number,
+    foodAmount?: number,
+    startingChips?: number,
+    addonTocAmount?: number,
+    finalTableSeats?: number
   ) => {
     const id = `tour-${Date.now()}`;
     const newTour: Tournament = {
@@ -683,7 +691,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       maxPlayers: maxPlayers || 24,
       highHandAmount: highHandAmount || 0,
       flyerUrl: flyerUrl || '',
-      flyerType: flyerType || null
+      flyerType: flyerType || null,
+      foodAmount: foodAmount || 0,
+      startingChips: startingChips || 8500,
+      addonTocAmount: addonTocAmount || 0,
+      finalTableSeats: finalTableSeats || 10
     };
 
     setDoc(doc(db, 'tournaments', id), newTour);
@@ -929,10 +941,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const bountyCount = updatedEntries.filter(e => e.hasBuyIn).length;
     const dealerCount = updatedEntries.filter(e => e.hasDealerAppreciation).length;
 
-    const netBuyInContribution = t.buyInAmount - t.bountyAmount - t.dealerAppreciationAmount;
-    const totalPrizePool = Math.max(0, (buyInCount * netBuyInContribution) + (addonCount * t.addonAmount) - (t.highHandAmount || 0));
-    const totalBountyPool = bountyCount * t.bountyAmount;
-    const totalDealerAppreciation = dealerCount * t.dealerAppreciationAmount;
+    const netBuyInContribution = t.buyInAmount - (t.bountyAmount || 0) - (t.dealerAppreciationAmount || 0) - (t.foodAmount || 0);
+    const netAddonContribution = t.addonAmount - (t.addonTocAmount || 0);
+    const totalPrizePool = Math.max(0, (buyInCount * netBuyInContribution) + (addonCount * netAddonContribution) - (t.highHandAmount || 0));
+    const totalBountyPool = bountyCount * (t.bountyAmount || 0);
+    const totalDealerAppreciation = (dealerCount * (t.dealerAppreciationAmount || 0)) + (addonCount * (t.addonTocAmount || 0));
 
     const payoutPrizePool = t.overridePrizePool !== undefined && t.overridePrizePool > 0
       ? t.overridePrizePool

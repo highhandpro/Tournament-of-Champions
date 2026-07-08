@@ -57,8 +57,9 @@ export const SeatingDisplayModal: React.FC<SeatingDisplayModalProps> = ({
   const buyInCount = activeTournament ? activeTournament.entries.filter((e: any) => e.hasBuyIn).length : 0;
   const addonsNum = activeTournament ? (activeTournament.totalAddons !== undefined ? activeTournament.totalAddons : activeTournament.entries.filter((e: any) => e.hasAddon).length) : 0;
   
-  const netBuyIn = activeTournament ? activeTournament.buyInAmount - activeTournament.bountyAmount - activeTournament.dealerAppreciationAmount : 0;
-  const rawCalculatedPrizePool = activeTournament ? (buyInCount * netBuyIn) + (addonsNum * activeTournament.addonAmount) : 0;
+  const netBuyIn = activeTournament ? activeTournament.buyInAmount - (activeTournament.bountyAmount || 0) - (activeTournament.dealerAppreciationAmount || 0) - (activeTournament.foodAmount || 0) : 0;
+  const netAddon = activeTournament ? activeTournament.addonAmount - (activeTournament.addonTocAmount || 0) : 0;
+  const rawCalculatedPrizePool = activeTournament ? (buyInCount * netBuyIn) + (addonsNum * netAddon) : 0;
   const calculatedPrizePool = activeTournament 
     ? (activeTournament.status === 'completed' 
         ? activeTournament.totalPrizePool 
