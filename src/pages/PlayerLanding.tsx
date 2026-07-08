@@ -16,7 +16,7 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
         justifyContent: 'center',
         minHeight: 'calc(100vh - 72px)',
         padding: '20px',
-        backgroundImage: 'radial-gradient(circle at center, rgba(16, 185, 129, 0.05) 0%, transparent 70%)',
+        backgroundImage: 'radial-gradient(circle at center, rgba(251, 191, 36, 0.05) 0%, transparent 70%)',
         textAlign: 'center',
         position: 'relative',
         overflow: 'hidden'
@@ -29,7 +29,7 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
           width: '300px',
           height: '300px',
           borderRadius: '50%',
-          backgroundColor: 'rgba(16, 185, 129, 0.03)',
+          backgroundColor: 'rgba(251, 191, 36, 0.02)',
           filter: 'blur(80px)',
           top: '20%',
           left: '10%',
@@ -61,7 +61,7 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
           gap: '24px'
         }}
       >
-        {/* Large Club Logo Banner Card */}
+        {/* Large Club Logo Banner Card with Description Inside */}
         <div 
           style={{
             width: '100%',
@@ -70,12 +70,14 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
             boxShadow: '0 24px 50px rgba(0, 0, 0, 0.6)',
             backgroundColor: '#010101',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             border: '1px solid rgba(255, 255, 255, 0.08)',
             marginBottom: '8px',
             padding: '32px',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            gap: '24px'
           }}
         >
           <img 
@@ -89,20 +91,22 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
               display: 'block'
             }}
           />
+          
+          <p 
+            style={{
+              fontSize: '0.95rem',
+              color: 'var(--text-muted)',
+              lineHeight: 1.6,
+              margin: '0 auto',
+              maxWidth: '460px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              paddingTop: '20px',
+              width: '100%'
+            }}
+          >
+            Welcome to the club. Sign in to view upcoming schedules, check live results, track player standings, and reserve your seat at the next tournament.
+          </p>
         </div>
-
-        {/* Premium Description */}
-        <p 
-          style={{
-            fontSize: '1rem',
-            color: 'var(--text-muted)',
-            lineHeight: 1.6,
-            margin: '0 auto',
-            maxWidth: '460px'
-          }}
-        >
-          Welcome to the club. Sign in to view upcoming schedules, check live results, track player standings, and reserve your seat at the next table.
-        </p>
 
         {/* Main CTA Action Area */}
         <div 
@@ -124,14 +128,14 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
               fontSize: '1.05rem',
               fontWeight: 600,
               borderRadius: '12px',
-              boxShadow: '0 8px 24px rgba(16, 185, 129, 0.25)',
+              boxShadow: '0 8px 24px rgba(251, 191, 36, 0.25)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer'
             }}
           >
-            Enter Portal & Login
+            Enter & Login
           </button>
           
           <button 

@@ -60,8 +60,10 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-main);
   background-image: url('/bg-felt.png');
-  background-repeat: repeat;
-  background-size: auto;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
@@ -185,14 +187,14 @@ p {
 }
 
 .btn-primary {
-  background-color: var(--color-emerald);
-  color: #052e16;
+  background-color: var(--color-gold);
+  color: #1a1605;
   font-weight: 600;
 }
 
 .btn-primary:hover {
-  background-color: #34d399;
-  box-shadow: var(--shadow-emerald);
+  background-color: #fcd34d;
+  box-shadow: var(--shadow-gold);
   transform: translateY(-1px);
 }
 
@@ -499,12 +501,12 @@ p {
   gap: 10px;
   font-size: 1.3rem;
   font-weight: 800;
-  color: var(--color-emerald);
+  color: var(--color-gold);
   letter-spacing: -0.02em;
 }
 
 .player-navbar-brand .brand-icon {
-  color: var(--color-emerald);
+  color: var(--color-gold);
 }
 
 .player-navbar-nav {
@@ -596,8 +598,8 @@ p {
 }
 
 .btn-navbar-login {
-  background-color: var(--color-emerald);
-  color: #052e16;
+  background-color: var(--color-gold);
+  color: #1a1605;
   border: 1px solid transparent;
   padding: 8px 16px;
   border-radius: 10px;
@@ -612,8 +614,8 @@ p {
 }
 
 .btn-navbar-login:hover {
-  background-color: #34d399;
-  box-shadow: var(--shadow-emerald);
+  background-color: #fcd34d;
+  box-shadow: var(--shadow-gold);
 }
 
 .navbar-dropdown-menu {
