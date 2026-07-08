@@ -23,6 +23,14 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
   // Find active season
   const activeSeason = state.seasons.find(s => s.id === selectedSeasonId) || null;
 
+  // Reactively sync selectedSeasonId once seasons load from Firestore
+  React.useEffect(() => {
+    if (!selectedSeasonId && state.seasons.length > 0) {
+      const active = state.seasons.find(s => s.isActive);
+      setSelectedSeasonId(active?.id || state.seasons[0].id);
+    }
+  }, [state.seasons, selectedSeasonId]);
+
   // Calculate standings
   const standings = selectedSeasonId ? calculateStandings(state, selectedSeasonId) : [];
 

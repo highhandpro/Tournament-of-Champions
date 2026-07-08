@@ -25,7 +25,7 @@ export const calculateStandings = (state: DatabaseState, seasonId?: string): Pla
 
   // Initialize standings for all active members
   activeMembers.forEach(m => {
-    const fwdVal = m.fwdPoints || 0;
+    const fwdVal = Number(m.fwdPoints) || 0;
     standingsMap[m.id] = {
       memberId: m.id,
       name: `${m.firstName} ${m.lastName}`,
@@ -46,7 +46,7 @@ export const calculateStandings = (state: DatabaseState, seasonId?: string): Pla
       // If member is soft-deleted, we still show them in stats, but might need to initialize map
       if (!standingsMap[entry.memberId]) {
         const deletedMember = state.members.find(m => m.id === entry.memberId);
-        const fwdVal = deletedMember ? (deletedMember.fwdPoints || 0) : 0;
+        const fwdVal = deletedMember ? (Number(deletedMember.fwdPoints) || 0) : 0;
         standingsMap[entry.memberId] = {
           memberId: entry.memberId,
           name: deletedMember ? `${deletedMember.firstName} ${deletedMember.lastName} (Retired)` : 'Unknown Player',
