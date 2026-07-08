@@ -1,8 +1,8 @@
 {
-  "crons": [
+  "rewrites": [
     {
-      "path": "/api/admin/run-scheduled-event-emails",
-      "schedule": "0 16 * * *"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
