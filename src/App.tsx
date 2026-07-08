@@ -24,6 +24,9 @@ import { auth } from './firebase';
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ShieldAlert } from 'lucide-react';
 
+// Set to true to redirect public users to the "Under Construction" page
+const UNDER_CONSTRUCTION = false;
+
 function App() {
   // Admin tabs: dashboard, members, tournaments, standings, settings
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -684,6 +687,41 @@ function App() {
   };
 
   if (portalMode === 'player') {
+    if (UNDER_CONSTRUCTION) {
+      return (
+        <div 
+          className="app-container player-portal-layout" 
+          style={{ 
+            flexDirection: 'column', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            minHeight: '100vh',
+            textAlign: 'center',
+            padding: '20px',
+            backgroundColor: '#000000',
+            color: '#ffffff'
+          }}
+        >
+          <div className="glass-card" style={{ maxWidth: '500px', padding: '40px', border: '1px solid var(--color-gold)', borderRadius: '16px', boxShadow: '0 0 30px rgba(251, 191, 36, 0.05)' }}>
+            <span style={{ fontSize: '3rem', display: 'block', marginBottom: '16px' }}>🚧</span>
+            <h1 style={{ fontSize: '2.0rem', fontWeight: 800, color: 'var(--color-gold)', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Under Construction
+            </h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '32px' }}>
+              We are currently updating our website to bring you the new tournament setup, point system, and a fresh layout! Please check back soon.
+            </p>
+            <button 
+              onClick={() => setPortalMode('admin')} 
+              className="btn btn-ghost" 
+              style={{ fontSize: '0.8rem', opacity: 0.25, padding: '4px 8px', color: 'var(--text-secondary)' }}
+            >
+              Admin Login
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="app-container player-portal-layout" style={{ flexDirection: 'column' }}>
         <PlayerNavbar 
