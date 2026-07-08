@@ -67,22 +67,25 @@ export const PlayerLanding: React.FC<PlayerLandingProps> = ({ onOpenLogin, setPo
             width: '100%',
             maxWidth: '520px',
             borderRadius: '16px',
-            overflow: 'hidden',
             boxShadow: '0 24px 50px rgba(0, 0, 0, 0.6)',
             backgroundColor: '#010101',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid rgba(255, 255, 255, 0.04)',
-            marginBottom: '8px'
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            marginBottom: '8px',
+            padding: '32px',
+            boxSizing: 'border-box'
           }}
         >
           <img 
             src="/club-logo.png" 
             alt="Tournament of Champions — Poker Series Club Logo" 
             style={{
-              width: '100%',
+              maxWidth: '100%',
               height: 'auto',
+              maxHeight: '260px',
+              objectFit: 'contain',
               display: 'block'
             }}
           />
