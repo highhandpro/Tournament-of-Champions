@@ -1085,48 +1085,60 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const approveMemberUpdate = async (approvalId: string) => {
-    const approval = state.pendingApprovals.find(p => p.id === approvalId);
-    if (!approval) return;
-
-    if (approval.type === 'update') {
-      const member = state.members.find(m => m.id === approval.memberId);
-      if (member) {
-        await setDoc(doc(db, 'members', approval.memberId), {
-          firstName: approval.firstName !== undefined ? approval.firstName : member.firstName,
-          lastName: approval.lastName !== undefined ? approval.lastName : member.lastName,
-          phone: approval.phone !== undefined ? approval.phone : member.phone,
-          email: approval.email !== undefined ? approval.email : member.email,
-          textReminders: approval.textReminders !== undefined ? approval.textReminders : (member.textReminders ?? true),
-          emailAnnouncements: approval.emailAnnouncements !== undefined ? approval.emailAnnouncements : (member.emailAnnouncements ?? true)
-        }, { merge: true });
+    try {
+      const approval = state.pendingApprovals.find(p => p.id === approvalId);
+      if (!approval) {
+        console.warn(`Approval not found with id: ${approvalId}`);
+        return;
       }
-    } else if (approval.type === 'guest') {
-      const newMember: Member = {
-        id: approval.memberId,
-        firstName: approval.firstName,
-        lastName: approval.lastName,
-        phone: approval.phone || '',
-        email: approval.email || '',
-        joinedDate: new Date().toISOString().split('T')[0],
-        isDeleted: false,
-        notes: 'Approved Member',
-        textReminders: approval.textReminders !== undefined ? approval.textReminders : true,
-        emailAnnouncements: approval.emailAnnouncements !== undefined ? approval.emailAnnouncements : true
-      };
-      await setDoc(doc(db, 'members', approval.memberId), newMember);
-    }
 
-    await deleteDoc(doc(db, 'pendingApprovals', approvalId));
+      if (approval.type === 'update') {
+        const member = state.members.find(m => m.id === approval.memberId);
+        if (member) {
+          await setDoc(doc(db, 'members', approval.memberId), {
+            firstName: approval.firstName !== undefined ? approval.firstName : member.firstName,
+            lastName: approval.lastName !== undefined ? approval.lastName : member.lastName,
+            phone: approval.phone !== undefined ? approval.phone : member.phone,
+            email: approval.email !== undefined ? approval.email : member.email,
+            textReminders: approval.textReminders !== undefined ? approval.textReminders : (member.textReminders ?? true),
+            emailAnnouncements: approval.emailAnnouncements !== undefined ? approval.emailAnnouncements : (member.emailAnnouncements ?? true)
+          }, { merge: true });
+        }
+      } else if (approval.type === 'guest') {
+        const newMember: Member = {
+          id: approval.memberId,
+          firstName: approval.firstName,
+          lastName: approval.lastName,
+          phone: approval.phone || '',
+          email: approval.email || '',
+          joinedDate: new Date().toISOString().split('T')[0],
+          isDeleted: false,
+          notes: 'Approved Member',
+          textReminders: approval.textReminders !== undefined ? approval.textReminders : true,
+          emailAnnouncements: approval.emailAnnouncements !== undefined ? approval.emailAnnouncements : true
+        };
+        await setDoc(doc(db, 'members', approval.memberId), newMember);
+      }
+
+      await deleteDoc(doc(db, 'pendingApprovals', approvalId));
+      alert('Member successfully approved!');
+    } catch (err: any) {
+      console.error("Firestore approval error:", err);
+      alert(`Failed to approve member. Firestore Error: ${err.message || err}`);
+    }
   };
 
   const rejectMemberUpdate = async (approvalId: string) => {
-    const approval = state.pendingApprovals.find(p => p.id === approvalId);
-    if (!approval) return;
+    try {
+      const approval = state.pendingApprovals.find(p => p.id === approvalId);
+      if (!approval) return;
 
-    // No need to delete member from members collection because it hasn't been created yet
-    
-
-    await deleteDoc(doc(db, 'pendingApprovals', approvalId));
+      await deleteDoc(doc(db, 'pendingApprovals', approvalId));
+      alert('Member update/registration rejected.');
+    } catch (err: any) {
+      console.error("Firestore rejection error:", err);
+      alert(`Failed to reject. Firestore Error: ${err.message || err}`);
+    }
   };
 
   const submitPlayerInfoForm = async (

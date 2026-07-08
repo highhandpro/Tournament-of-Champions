@@ -422,9 +422,9 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
                         padding: '6px 14px',
                         fontSize: '0.85rem',
                         fontWeight: 600,
-                        backgroundColor: 'var(--color-emerald)',
-                        borderColor: 'var(--color-emerald)',
-                        color: 'black'
+                        backgroundColor: 'var(--color-gold)',
+                        borderColor: 'var(--color-gold)',
+                        color: '#1a1605'
                       }}
                     >
                       Approve

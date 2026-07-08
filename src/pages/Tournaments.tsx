@@ -1319,7 +1319,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                 ))}
               </div>
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', textAlign: 'right' }}>
-                Total Percent: <strong style={{ color: payoutPcts.reduce((a,b)=>a+b, 0) === 100 ? 'var(--color-emerald)' : 'var(--text-secondary)' }}>
+                Total Percent: <strong style={{ color: payoutPcts.reduce((a,b)=>a+b, 0) === 100 ? 'var(--color-gold)' : 'var(--text-secondary)' }}>
                   {payoutPcts.reduce((a,b)=>a+b, 0)}%
                 </strong> (should be 100%)
               </div>
@@ -1779,8 +1779,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('rsvp')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'rsvp' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'rsvp' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'rsvp' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'rsvp' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'rsvp' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1793,8 +1793,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('checkin')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'checkin' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'checkin' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'checkin' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'checkin' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'checkin' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1807,8 +1807,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('seating')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'seating' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'seating' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'seating' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'seating' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'seating' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1821,8 +1821,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('print')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'print' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'print' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'print' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'print' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'print' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1838,8 +1838,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('rsvp')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'rsvp' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'rsvp' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'rsvp' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'rsvp' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'rsvp' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1852,8 +1852,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('checkin')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'checkin' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'checkin' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'checkin' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'checkin' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'checkin' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1866,8 +1866,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('seating')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'seating' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'seating' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'seating' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'seating' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'seating' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1880,8 +1880,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('players')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'players' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'players' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'players' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'players' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'players' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1894,8 +1894,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('summary')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'summary' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'summary' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'summary' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'summary' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'summary' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1908,8 +1908,8 @@ export const Tournaments: React.FC<TournamentsProps> = ({
               onClick={() => setSubTab('print')}
               style={{
                 borderRadius: '8px 8px 0 0',
-                borderBottom: subTab === 'print' ? '3px solid var(--color-emerald)' : 'none',
-                color: subTab === 'print' ? 'var(--color-emerald)' : 'var(--text-secondary)',
+                borderBottom: subTab === 'print' ? '3px solid var(--color-gold)' : 'none',
+                color: subTab === 'print' ? 'var(--color-gold)' : 'var(--text-secondary)',
                 fontWeight: subTab === 'print' ? 600 : 400,
                 padding: '8px 12px',
                 fontSize: '0.85rem'
@@ -1924,7 +1924,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
             onClick={() => setSubTab('results')}
             style={{
               borderRadius: '8px 8px 0 0',
-              borderBottom: '3px solid var(--color-emerald)',
+              borderBottom: '3px solid var(--color-gold)',
               color: 'var(--color-emerald)',
               fontWeight: 600
             }}
@@ -2729,7 +2729,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                     : (totalBountiesPaid === totalBountiesAvailable ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(255, 255, 255, 0.1)'),
                   color: totalBountiesPaid > totalBountiesAvailable 
                     ? 'var(--color-danger)' 
-                    : (totalBountiesPaid === totalBountiesAvailable ? 'var(--color-emerald)' : 'var(--text-secondary)')
+                    : (totalBountiesPaid === totalBountiesAvailable ? 'var(--color-gold)' : 'var(--text-secondary)')
                 }}>
                   Bounties Paid: {totalBountiesPaid} of {totalBountiesAvailable}
                 </span>
@@ -3129,7 +3129,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                       setSubTab('results');
                     }}
                     className="btn btn-primary"
-                    style={{ backgroundColor: 'var(--color-emerald)' }}
+                    style={{ backgroundColor: 'var(--color-gold)', color: '#1a1605' }}
                   >
                     Confirm & Post Results
                   </button>
@@ -3260,8 +3260,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   onClick={() => setPrintType('signin')}
                   className={`btn ${printType === 'signin' ? 'btn-primary' : 'btn-secondary'}`}
                   style={{
-                    backgroundColor: printType === 'signin' ? 'var(--color-emerald)' : 'rgba(255,255,255,0.05)',
-                    borderColor: printType === 'signin' ? 'var(--color-emerald)' : 'rgba(255,255,255,0.1)'
+                    backgroundColor: printType === 'signin' ? 'var(--color-gold)' : 'rgba(255,255,255,0.05)',
+                    borderColor: printType === 'signin' ? 'var(--color-gold)' : 'rgba(255,255,255,0.1)',
+                    color: printType === 'signin' ? '#1a1605' : 'var(--text-primary)'
                   }}
                 >
                   Player Sign-In Sheet ({sortedRegisteredMembers.length} RSVPs)
@@ -3271,8 +3272,9 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   onClick={() => setPrintType('scoresheet')}
                   className={`btn ${printType === 'scoresheet' ? 'btn-primary' : 'btn-secondary'}`}
                   style={{
-                    backgroundColor: printType === 'scoresheet' ? 'var(--color-emerald)' : 'rgba(255,255,255,0.05)',
-                    borderColor: printType === 'scoresheet' ? 'var(--color-emerald)' : 'rgba(255,255,255,0.1)'
+                    backgroundColor: printType === 'scoresheet' ? 'var(--color-gold)' : 'rgba(255,255,255,0.05)',
+                    borderColor: printType === 'scoresheet' ? 'var(--color-gold)' : 'rgba(255,255,255,0.1)',
+                    color: printType === 'scoresheet' ? '#1a1605' : 'var(--text-primary)'
                   }}
                 >
                   TD Score Sheet ({sortedRegisteredMembers.length} Registered Players)
@@ -3605,7 +3607,7 @@ export const Tournaments: React.FC<TournamentsProps> = ({
                   ))}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '8px', textAlign: 'right' }}>
-                  Total: <strong style={{ color: modalPayoutPcts.reduce((a,b)=>a+b,0) === 100 ? 'var(--color-emerald)' : 'var(--text-secondary)' }}>
+                  Total: <strong style={{ color: modalPayoutPcts.reduce((a,b)=>a+b,0) === 100 ? 'var(--color-gold)' : 'var(--text-secondary)' }}>
                     {modalPayoutPcts.reduce((a,b)=>a+b,0)}%
                   </strong> (should be 100%)
                 </div>
