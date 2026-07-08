@@ -24,9 +24,6 @@ import { auth } from './firebase';
 import { signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ShieldAlert } from 'lucide-react';
 
-// Set to true to redirect public users to the "Under Construction" page
-const UNDER_CONSTRUCTION = false;
-
 function App() {
   // Admin tabs: dashboard, members, tournaments, standings, settings
   const [activeTab, setActiveTab] = useState<string>('dashboard');
@@ -687,7 +684,8 @@ function App() {
   };
 
   if (portalMode === 'player') {
-    if (UNDER_CONSTRUCTION) {
+    const isUnderConstruction = state.settings?.underConstruction || false;
+    if (isUnderConstruction) {
       return (
         <div 
           className="app-container player-portal-layout" 

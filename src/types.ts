@@ -92,6 +92,7 @@ export interface Settings {
   pointsBaseAttendance: number;
   maxPlayersPerTable: number;
   adminPassword?: string;
+  underConstruction?: boolean;
 }
 
 export interface PendingApproval {

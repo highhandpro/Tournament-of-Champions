@@ -20,6 +20,7 @@ export const Settings: React.FC<SettingsProps> = ({ onChangePassword, isChiefAdm
   const [dealerApp, setDealerApp] = useState(state.settings.defaultDealerAppreciation);
   const [attendancePoints, setAttendancePoints] = useState(state.settings.pointsBaseAttendance);
   const [maxPlayers, setMaxPlayers] = useState(state.settings.maxPlayersPerTable);
+  const [underConstruction, setUnderConstruction] = useState(state.settings.underConstruction || false);
 
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [importStatus, setImportStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -32,7 +33,8 @@ export const Settings: React.FC<SettingsProps> = ({ onChangePassword, isChiefAdm
       defaultBounty: bounty,
       defaultDealerAppreciation: dealerApp,
       pointsBaseAttendance: attendancePoints,
-      maxPlayersPerTable: maxPlayers
+      maxPlayersPerTable: maxPlayers,
+      underConstruction: underConstruction
     };
 
     updateSettings(updated);
@@ -134,6 +136,7 @@ export const Settings: React.FC<SettingsProps> = ({ onChangePassword, isChiefAdm
             setDealerApp(parsed.settings.defaultDealerAppreciation);
             setAttendancePoints(parsed.settings.pointsBaseAttendance);
             setMaxPlayers(parsed.settings.maxPlayersPerTable);
+            setUnderConstruction(parsed.settings.underConstruction || false);
           }
         } else {
           setImportStatus('error');
@@ -247,6 +250,33 @@ export const Settings: React.FC<SettingsProps> = ({ onChangePassword, isChiefAdm
         {/* Portability Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
+          {/* Maintenance Mode Card */}
+          <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', border: underConstruction ? '1px solid var(--color-gold)' : '1px solid var(--border-subtle)', transition: 'all 0.2s ease' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <span>🚧</span>
+              <span>Maintenance Mode</span>
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', margin: 0 }}>
+              Toggle public "Under Construction" page. Visitors will be redirected to the holding screen. Admins can still bypass this lock to test and edit the site.
+            </p>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', padding: '12px 16px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Under Construction</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const newVal = !underConstruction;
+                  setUnderConstruction(newVal);
+                  updateSettings({ ...state.settings, underConstruction: newVal });
+                }}
+                className={`btn ${underConstruction ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ padding: '6px 14px', minHeight: 'auto', fontSize: '0.85rem' }}
+              >
+                {underConstruction ? 'ACTIVE' : 'INACTIVE'}
+              </button>
+            </div>
+          </div>
+
           {/* Account & Security Card */}
           {onChangePassword && (
             <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

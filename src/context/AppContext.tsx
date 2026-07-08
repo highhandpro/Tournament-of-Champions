@@ -79,7 +79,8 @@ const DEFAULT_SETTINGS = {
   defaultDealerAppreciation: 5,
   pointsBaseAttendance: 10,
   maxPlayersPerTable: 8,
-  adminPassword: 'pennyante'
+  adminPassword: 'pennyante',
+  underConstruction: false
 };
 
 // Initial default mock database to make the app look stunning right away
