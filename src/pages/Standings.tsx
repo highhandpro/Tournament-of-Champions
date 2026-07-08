@@ -50,6 +50,24 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
     updateSeason(id, { isActive: true });
   };
 
+  // Helper to format date as D-MMM (e.g. 13-Jun)
+  const formatHeaderDate = (dateStr: string) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const [year, month, day] = parts;
+    const date = new Date(Number(year), Number(month) - 1, Number(day));
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${Number(day)}-${months[date.getMonth()]}`;
+  };
+
+  // Get completed tournaments sorted chronologically
+  const completedTournaments = selectedSeasonId
+    ? state.tournaments
+        .filter(t => t.seasonId === selectedSeasonId && t.status === 'completed')
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    : [];
+
   return (
     <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
       
@@ -123,14 +141,37 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
 
       {/* Main Leaderboard Table */}
       <div className="glass-card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
             <Award size={22} style={{ color: 'var(--color-gold)' }} />
-            Leaderboard Standings
+            LEADERBOARD
           </h3>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Showing {standings.length} active players
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              backgroundColor: 'rgba(255,255,255,0.04)',
+              border: '1px solid var(--border-subtle)',
+              padding: '4px 12px',
+              borderRadius: '20px',
+              color: 'var(--text-secondary)'
+            }}>
+              {standings.length} players
+            </span>
+            <button 
+              className="btn btn-secondary" 
+              onClick={() => alert("Facebook Leaderboard Download feature coming soon!")}
+              style={{
+                fontSize: '0.85rem',
+                padding: '8px 16px',
+                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                fontWeight: 600
+              }}
+            >
+              Download Facebook Leaderboard
+            </button>
+          </div>
         </div>
 
         {standings.length > 0 ? (
@@ -138,20 +179,22 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th style={{ width: '70px' }}>Rank</th>
-                  <th>Player Name</th>
-                  <th style={{ textAlign: 'center' }}>Tournaments Played</th>
-                  <th style={{ textAlign: 'center' }}>Wins (1st)</th>
-                  <th style={{ textAlign: 'center' }}>Top 10s</th>
-                  <th style={{ textAlign: 'center' }}>Bounties</th>
-                  <th style={{ textAlign: 'right' }}>Total Earnings</th>
-                  <th style={{ textAlign: 'right', color: 'var(--color-gold)' }}>Season Points</th>
+                  <th style={{ width: '70px', textAlign: 'center' }}>LEADERS</th>
+                  <th>NAME</th>
+                  <th style={{ textAlign: 'center' }}>TOC SEAT</th>
+                  <th style={{ textAlign: 'center', color: 'var(--color-gold)' }}>TOTAL POINTS</th>
+                  <th style={{ textAlign: 'center' }}>FWD BALANCE</th>
+                  {completedTournaments.map(t => (
+                    <th key={t.id} style={{ textAlign: 'center' }}>
+                      {formatHeaderDate(t.date)}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {standings.map((player, idx) => (
                   <tr key={player.memberId}>
-                    <td style={{ fontWeight: 700, fontSize: '1.05rem' }}>
+                    <td style={{ fontWeight: 700, fontSize: '1.05rem', textAlign: 'center' }}>
                       {idx + 1}
                     </td>
                     <td style={{ fontWeight: 600 }}>
@@ -170,23 +213,48 @@ export const Standings: React.FC<StandingsProps> = ({ isChiefAdmin }) => {
                                 ♣
                               </div>
                             )}
-                            <span>{player.name}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              {player.name}
+                              {player.wins > 0 && <span title="1st Place Winner" style={{ cursor: 'help' }}>👑</span>}
+                            </span>
                           </div>
                         );
                       })()}
                     </td>
-                    <td style={{ textAlign: 'center' }}>{player.played}</td>
-                    <td style={{ textAlign: 'center', fontWeight: 600, color: player.wins > 0 ? 'var(--text-gold)' : 'inherit' }}>
-                      {player.wins}
+                    <td style={{ textAlign: 'center' }}>
+                      {player.tocSeat !== 'Alternate' ? (
+                        <span style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 700,
+                          backgroundColor: 'rgba(212, 163, 89, 0.12)',
+                          color: 'var(--text-gold)',
+                          border: '1px solid rgba(212, 163, 89, 0.25)',
+                          padding: '4px 10px',
+                          borderRadius: '20px',
+                          display: 'inline-block'
+                        }}>
+                          {player.tocSeat}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                          Alternate
+                        </span>
+                      )}
                     </td>
-                    <td style={{ textAlign: 'center' }}>{player.top10}</td>
-                    <td style={{ textAlign: 'center' }}>{player.bounties}</td>
-                    <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--color-emerald)' }}>
-                      ${player.earnings}
-                    </td>
-                    <td style={{ textAlign: 'right', fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-gold)' }}>
+                    <td style={{ textAlign: 'center', fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-gold)' }}>
                       {player.points}
                     </td>
+                    <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
+                      {player.fwdPoints}
+                    </td>
+                    {completedTournaments.map(t => {
+                      const pts = player.gamePoints[t.id];
+                      return (
+                        <td key={t.id} style={{ textAlign: 'center', color: pts > 0 ? 'var(--text-primary)' : 'var(--text-secondary)', opacity: pts > 0 ? 1 : 0.35 }}>
+                          {pts !== undefined ? pts : 0}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

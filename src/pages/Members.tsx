@@ -33,6 +33,7 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
   const [logoUrl, setLogoUrl] = useState('');
   const [cardUrl, setCardUrl] = useState('');
   const [tempPassword, setTempPassword] = useState('');
+  const [fwdPointsInput, setFwdPointsInput] = useState('');
 
   // Phone input formatting
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,6 +58,7 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
     setLogoUrl('');
     setCardUrl('');
     setTempPassword('');
+    setFwdPointsInput('');
     setErrorMsg(null);
     setIsAddMemberOpen(true);
   };
@@ -73,6 +75,7 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
     setLogoUrl(m.logoUrl || '');
     setCardUrl(m.cardUrl || '');
     setTempPassword('');
+    setFwdPointsInput(String(m.fwdPoints || ''));
     setErrorMsg(null);
   };
 
@@ -127,7 +130,8 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
           notes,
           logoUrl,
           cardUrl,
-          role
+          role,
+          fwdPoints: Number(fwdPointsInput) || 0
         });
         setEditingMember(null);
       } else {
@@ -138,7 +142,7 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
             return;
           }
         }
-        await addMember(firstName, lastName, phone, email, notes, memberIdInput.trim(), logoUrl, cardUrl, role);
+        await addMember(firstName, lastName, phone, email, notes, memberIdInput.trim(), logoUrl, cardUrl, role, Number(fwdPointsInput) || 0);
         setIsAddMemberOpen(false);
       }
 
@@ -153,6 +157,7 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
       setCardUrl('');
       setMemberIdInput('');
       setTempPassword('');
+      setFwdPointsInput('');
       setErrorMsg(null);
     } catch (err) {
       console.error(err);
@@ -866,6 +871,18 @@ export const Members: React.FC<MembersProps> = ({ isAddMemberOpen, setIsAddMembe
                   placeholder="e.g. john.doe@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label htmlFor="fwdPoints">Carry Forward Points (FWD Balance)</label>
+                <input
+                  id="fwdPoints"
+                  type="number"
+                  placeholder="e.g. 157"
+                  value={fwdPointsInput}
+                  onChange={(e) => setFwdPointsInput(e.target.value)}
                   className="form-input"
                 />
               </div>

@@ -13,6 +13,7 @@ export interface Member {
   logoUrl?: string;
   cardUrl?: string;
   role?: 'chief-admin' | 'tournament-director' | 'admin' | 'player';
+  fwdPoints?: number;  // Carry forward points balance from previous games
 }
 
 export interface TournamentEntry {

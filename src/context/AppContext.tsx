@@ -14,7 +14,7 @@ import {
 interface AppContextProps {
   state: DatabaseState;
   activeSeason: Season | null;
-  addMember: (firstName: string, lastName: string, phone: string, email: string, notes?: string, customId?: string, logoUrl?: string, cardUrl?: string, role?: 'chief-admin' | 'tournament-director' | 'admin' | 'player') => void;
+  addMember: (firstName: string, lastName: string, phone: string, email: string, notes?: string, customId?: string, logoUrl?: string, cardUrl?: string, role?: 'chief-admin' | 'tournament-director' | 'admin' | 'player', fwdPoints?: number) => void;
   updateMember: (id: string, updated: Partial<Member>) => void;
   deleteMember: (id: string) => void;
   addSeason: (name: string, startDate: string, endDate: string, isActive: boolean) => void;
@@ -558,7 +558,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const activeSeason = state.seasons.find(s => s.isActive) || null;
 
   // Member Management
-  const addMember = async (firstName: string, lastName: string, phone: string, email: string, notes?: string, customId?: string, logoUrl?: string, cardUrl?: string, role?: 'chief-admin' | 'tournament-director' | 'admin' | 'player') => {
+  const addMember = async (firstName: string, lastName: string, phone: string, email: string, notes?: string, customId?: string, logoUrl?: string, cardUrl?: string, role?: 'chief-admin' | 'tournament-director' | 'admin' | 'player', fwdPoints?: number) => {
     let id = '';
     if (customId && customId.trim()) {
       id = customId.trim();
@@ -582,7 +582,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isDeleted: false,
       logoUrl: logoUrl || '',
       cardUrl: cardUrl || '',
-      role: role || 'player'
+      role: role || 'player',
+      fwdPoints: fwdPoints || 0
     };
     await setDoc(doc(db, 'members', id), newMember);
   };
